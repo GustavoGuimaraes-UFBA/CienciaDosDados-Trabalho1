@@ -52,7 +52,7 @@ def standardize_fields(df: pd.DataFrame) -> pd.DataFrame:
     # Ajuste conforme os dados específicos
     df = df.copy()
     # Converter colunas numéricas
-    numeric_cols = df.select_dtypes(include=['object']).columns
+    numeric_cols = df.select_dtypes(include=['str']).columns
     for col in numeric_cols:
         try:
             df[col] = pd.to_numeric(df[col], errors='ignore')
@@ -62,6 +62,17 @@ def standardize_fields(df: pd.DataFrame) -> pd.DataFrame:
     df.columns = df.columns.str.lower().str.replace(' ', '_')
     return df
 
+def save_dataframe(df: pd.DataFrame, output_path: str) -> None:
+    """
+    Salva um DataFrame em um arquivo CSV.
+
+    Args:
+        df (pd.DataFrame): DataFrame a ser salvo.
+        output_path (str): Caminho onde salvar o arquivo CSV.
+    """
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    df.to_csv(output_path, index=False)
+    print(f"DataFrame salvo em {output_path} com sucesso.")
 
 # Exemplo de uso:
 # file_id = '1A2B3C4D5E6F7G8H9I0J_ID_USER' # Substitua pelo ID real do arquivo
