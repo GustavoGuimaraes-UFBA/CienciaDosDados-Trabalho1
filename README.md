@@ -15,6 +15,7 @@ Análises de dados para a matéria de Ciências de Dados na UFBA (2026.1)
 
 ---
 ## **Pré-requisitos**:
+- **Gdown** (Download Base Pública no Google Drive)
 - **Pandas** (Tratamento de bases)
 - **Matplotlib** (Plotagem de gráficos básica)
 - **Seaborn** (Plotagem visual de gráficos)
