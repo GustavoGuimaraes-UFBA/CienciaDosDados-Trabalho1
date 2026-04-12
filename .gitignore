@@ -1,5 +1,5 @@
 .env
 .venv
-notebooks\data
-data\raw
-data\processed
+notebooks/data/*
+data/raw/*
+data/processed/*
