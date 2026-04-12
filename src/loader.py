@@ -32,9 +32,13 @@ def load_and_clean_data(filepath: str) -> pd.DataFrame:
         pd.DataFrame: DataFrame limpo.
     """
     df = pd.read_csv(filepath)
-    # Exemplo: remover nulos
+    
+    # Exemplo: remover nulos, converter tipos de dados, etc.
+    # Converter tipos de dados para os mais apropriados automaticamente
+    df = df.convert_dtypes()
     # Remover linhas com valores nulos em colunas críticas
-    df = df.dropna()
+    df = df.dropna(how='all') #incluir subset=['coluna1', 'coluna2'] para especificar colunas que não podem ser nulas
+
     return df
 
 
