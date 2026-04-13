@@ -3,3 +3,5 @@
 notebooks/data/*
 data/raw/*
 data/processed/*
+src/__pycache__/*
+output/*
