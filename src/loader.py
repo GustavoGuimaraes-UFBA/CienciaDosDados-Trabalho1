@@ -34,6 +34,7 @@ def load_and_clean_data(filepath: str) -> pd.DataFrame:
     df = pd.read_csv(filepath)
     
     # Exemplo: remover nulos, converter tipos de dados, etc.
+    df['generic_model_name'] = df['model_name'].str.split().str[0].str.split('-').str[0] #extrai a parte genérica do nome do modelo (ex: "gpt-3.5-turbo" -> "gpt")
     # Converter tipos de dados para os mais apropriados automaticamente
     df = df.convert_dtypes()
     # Remover linhas com valores nulos em colunas críticas
@@ -75,8 +76,11 @@ def save_dataframe(df: pd.DataFrame, output_path: str) -> None:
         output_path (str): Caminho onde salvar o arquivo CSV.
     """
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    df.to_csv(output_path, index=False)
-    print(f"DataFrame salvo em {output_path} com sucesso.")
+    try:
+        df.to_csv(output_path, index=False)
+        print(f"DataFrame salvo em {output_path} com sucesso.")
+    except Exception as e:
+        print(f"Erro ao salvar o DataFrame em {output_path}: {e}")
 
 # Exemplo de uso:
 # file_id = '1A2B3C4D5E6F7G8H9I0J_ID_USER' # Substitua pelo ID real do arquivo
