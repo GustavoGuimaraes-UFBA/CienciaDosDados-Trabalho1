@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
+import plotly.express as px
+
 
 #criar uma função de plotagem de linha com a biblioteca seaborn:
 def plot_performance_line(data, x_col, y_col, title=None, group_col=None, n=None):
