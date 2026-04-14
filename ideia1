@@ -1,0 +1,55 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 1. Carregar a base de dados original
+df = pd.read_csv('LLM_Price_Performance_Tracker.csv')
+
+# ==========================================
+# FASE DE TRATAMENTO DE DADOS
+# ==========================================
+
+# Remover a coluna 'chatbot_arena_elo' por ter muitos dados nulos
+if 'chatbot_arena_elo' in df.columns:
+    df_clean = df.drop(columns=['chatbot_arena_elo'])
+else:
+    df_clean = df.copy()
+
+# Filtrar a base: Remover linhas que estão com o Preço ou a Inteligência em branco (NaN)
+df_clean = df_clean.dropna(subset=['blended_cost_usd_per_1m', 'composite_benchmark'])
+
+# Salvar o novo arquivo limpo para usar no trabalho
+df_clean.to_csv('LLM_Tratado_TemaA.csv', index=False)
+
+# ==========================================
+# FASE DE ANÁLISE E GRÁFICO (TEMA A)
+# ==========================================
+
+# Separar as variáveis X (Custo) e Y (Inteligência) usando numpy
+x = df_clean['blended_cost_usd_per_1m'].values
+y = df_clean['composite_benchmark'].values
+
+# Calcular a correlação estatística básica usando numpy
+correlacao = np.corrcoef(x, y)[0, 1]
+print(f"Modelos analisados: {len(df_clean)}")
+print(f"Correlação entre Custo e Inteligência: {correlacao:.2f}")
+
+# Configurar e criar o Gráfico de Dispersão (Scatter Plot)
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.scatter(x, y, alpha=0.6, color='teal', edgecolors='black')
+
+# Usar escala logarítmica no Eixo X porque os preços variam drasticamente 
+# (de $0.01 a mais de $100 por 1 milhão de tokens)
+ax.set_xscale('log')
+
+# Adicionar títulos e rótulos bem explicativos
+ax.set_title('Análise: Custo vs. Inteligência dos Modelos de IA', fontsize=14, pad=15)
+ax.set_xlabel('Custo Combinado (USD por 1 Milhão de Tokens) - Escala Logarítmica', fontsize=12)
+ax.set_ylabel('Nota de Inteligência (Composite Benchmark)', fontsize=12)
+
+# Adicionar linhas de grade para facilitar a visualização no trabalho
+ax.grid(True, which="both", linestyle="--", alpha=0.5)
+
+# Evitar que os textos fiquem cortados e salvar a imagem
+plt.tight_layout()
+plt.savefig('custo_vs_inteligencia.png')
