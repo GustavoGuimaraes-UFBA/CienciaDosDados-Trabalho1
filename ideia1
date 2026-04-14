@@ -18,38 +18,65 @@ else:
 # Filtrar a base: Remover linhas que estão com o Preço ou a Inteligência em branco (NaN)
 df_clean = df_clean.dropna(subset=['blended_cost_usd_per_1m', 'composite_benchmark'])
 
-# Salvar o novo arquivo limpo para usar no trabalho
-df_clean.to_csv('LLM_Tratado_TemaA.csv', index=False)
-
 # ==========================================
 # FASE DE ANÁLISE E GRÁFICO (TEMA A)
 # ==========================================
 
-# Separar as variáveis X (Custo) e Y (Inteligência) usando numpy
-x = df_clean['blended_cost_usd_per_1m'].values
-y = df_clean['composite_benchmark'].values
+# Filtrar dados para garantir que o custo seja positivo para a escala logarítmica
+df_plotted = df_clean[df_clean['blended_cost_usd_per_1m'] > 0].copy()
+
+# Calcular uma métrica de custo-benefício (Inteligência / Custo)
+# Adicionar um pequeno valor ao custo para evitar divisão por zero se houver algum custo 0
+df_plotted['cost_benefit_ratio'] = df_plotted['composite_benchmark'] / (df_plotted['blended_cost_usd_per_1m'])
+
+# Identificar os 5 melhores modelos por custo-benefício APÓS filtrar por custo positivo
+top_5_models = df_plotted.nlargest(5, 'cost_benefit_ratio')
+
+# Separar as variáveis X (Custo) e Y (Inteligência) usando numpy do DataFrame filtrado
+x = df_plotted['blended_cost_usd_per_1m'].values
+y = df_plotted['composite_benchmark'].values
 
 # Calcular a correlação estatística básica usando numpy
 correlacao = np.corrcoef(x, y)[0, 1]
-print(f"Modelos analisados: {len(df_clean)}")
+print(f"Modelos analisados: {len(df_plotted)}")
 print(f"Correlação entre Custo e Inteligência: {correlacao:.2f}")
 
-# Configurar e criar o Gráfico de Dispersão (Scatter Plot)
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.scatter(x, y, alpha=0.6, color='teal', edgecolors='black')
+# Debug: Print data ranges
+print(f"X (Custo) min: {x.min()}, X max: {x.max()}")
+print(f"Y (Inteligência) min: {y.min()}, Y max: {y.max()}")
+print(f"Top 5 X (Custo) min: {top_5_models['blended_cost_usd_per_1m'].min()}, Top 5 X max: {top_5_models['blended_cost_usd_per_1m'].max()}")
+print(f"Top 5 Y (Inteligência) min: {top_5_models['composite_benchmark'].min()}, Top 5 Y max: {top_5_models['composite_benchmark'].max()}")
 
-# Usar escala logarítmica no Eixo X porque os preços variam drasticamente 
+# Configurar e criar o Gráfico de Dispersão (Scatter Plot)
+fig, ax = plt.subplots(figsize=(15, 9)) # Aumentar o tamanho para acomodar os rótulos e evitar o warning
+ax.scatter(x, y, alpha=0.6, color='teal', edgecolors='black', label='Outros Modelos')
+
+# Plotar os 5 melhores modelos em destaque
+ax.scatter(top_5_models['blended_cost_usd_per_1m'],
+           top_5_models['composite_benchmark'],
+           color='red', s=150, edgecolors='white', zorder=5, label='Top 5 Custo-Benefício') # Tamanho maior e cor distinta
+
+# Adicionar rótulos aos top 5 modelos
+for i, row in top_5_models.iterrows():
+    ax.text(row['blended_cost_usd_per_1m'] * 1.1, # Ajustar a posição x ligeiramente para legibilidade
+            row['composite_benchmark'],
+            row['model_name'],
+            fontsize=9, ha='left', va='center', color='darkred', weight='bold')
+
+# Usar escala logarítmica no Eixo X porque os preços variam drasticamente
 # (de $0.01 a mais de $100 por 1 milhão de tokens)
 ax.set_xscale('log')
 
 # Adicionar títulos e rótulos bem explicativos
-ax.set_title('Análise: Custo vs. Inteligência dos Modelos de IA', fontsize=14, pad=15)
+ax.set_title('Análise: Custo vs. Inteligência dos Modelos de IA', fontsize=16, pad=15)
 ax.set_xlabel('Custo Combinado (USD por 1 Milhão de Tokens) - Escala Logarítmica', fontsize=12)
 ax.set_ylabel('Nota de Inteligência (Composite Benchmark)', fontsize=12)
 
 # Adicionar linhas de grade para facilitar a visualização no trabalho
 ax.grid(True, which="both", linestyle="--", alpha=0.5)
 
+# Adicionar legenda
+ax.legend()
+
 # Evitar que os textos fiquem cortados e salvar a imagem
-plt.tight_layout()
-plt.savefig('custo_vs_inteligencia.png')
+plt.savefig('custo_vs_inteligencia.png', bbox_inches='tight')
