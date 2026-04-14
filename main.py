@@ -1,6 +1,6 @@
 #Example
 from src.loader import download_csv_from_drive, load_and_clean_data, standardize_fields
-from src.plotters import plot_performance_line
+from src.plotters import plot_performance_line, plot_performance_bar, plot_performance_scatter, plot_performance_area
 from src.utils import apply_custom_style
 import matplotlib.pyplot as plt
 
