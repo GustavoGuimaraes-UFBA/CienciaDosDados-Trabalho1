@@ -4,7 +4,7 @@ Análises de dados para a matéria de Ciências de Dados na UFBA (2026.1)
 - Primeira proposta: criação de visualizações estatísticas de **[Assunto a definir]**
 
 #### **Acessar pelo Google Colab**
-[https://colab.research.google.com/github/GustavoGuimaraes-UFBA/CienciaDosDados-Trabalho1/blob/main/notebooks/loader.ipynb](https://colab.research.google.com/github/GustavoGuimaraes-UFBA/CienciaDosDados-Trabalho1/blob/main/notebooks/loader.ipynb)
+[https://colab.research.google.com/drive/1Y1Ku_gej-kH8QHJIE0cVLLxsp5j8aG4p](https://colab.research.google.com/drive/1Y1Ku_gej-kH8QHJIE0cVLLxsp5j8aG4p)
 
 ## **Estrutura Geral**:
 
