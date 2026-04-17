@@ -34,12 +34,15 @@ def load_and_clean_data(filepath: str) -> pd.DataFrame:
     df = pd.read_csv(filepath)
     
     # Exemplo: remover nulos, converter tipos de dados, etc.
-    df['generic_model_name'] = df['model_name'].str.split().str[0].str.split('-').str[0] #extrai a parte genérica do nome do modelo (ex: "gpt-3.5-turbo" -> "gpt")
+    df['generic_model_name'] = df['model_name'].str.split().str[0].str.split('-').str[0].str.upper()#extrai a parte genérica do nome do modelo (ex: "gpt-3.5-turbo" -> "gpt")
+    df['clean_model_name'] = df['model_name'].str.split('(').str[0]
+    df['reasoning level'] = df['generic_model_name'].str.extract(r'\((.*?)\)', expand=False).fillna('Unknown')
+    #transformar a coluna de ano de lançamento em inteiro, forçando erros a se tornarem NaN
+    df['release_year'] = pd.to_numeric(df['release_year'], errors='coerce').astype('Int64')
     # Converter tipos de dados para os mais apropriados automaticamente
     df = df.convert_dtypes()
     # Remover linhas com valores nulos em colunas críticas
     df = df.dropna(how='all') #incluir subset=['coluna1', 'coluna2'] para especificar colunas que não podem ser nulas
-
     return df
 
 
